@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-17T11:49:55.539Z",
+  "platform": "darwin arm64",
+  "package_sha256": "09e86072ffa4f2ed9bd301d0f38cc78c066fedbaf3028cb24a31f2d0fcaee8ea",
+  "actions": [
+    "skills.read",
+    "save_project",
+    "list_projects",
+    "get_source",
+    "get_operation",
+    "put_node",
+    "put_relation",
+    "put_event",
+    "set_layout",
+    "get_projection",
+    "project_blueprint",
+    "remove_relation",
+    "remove_event",
+    "remove_node",
+    "compare_versions",
+    "export_project",
+    "get_project"
+  ],
+  "cli_mcp": true,
+  "skill_resources": true,
+  "hotplug": true,
+  "uninstall_reinstall": true,
+  "windows": false,
+  "limits": [
+    "固定候选生成与正式设定投影由独立旅程验收，未以错误分支代替成功证据。"
+  ]
+}
