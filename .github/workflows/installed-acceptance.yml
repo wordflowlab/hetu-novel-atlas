@@ -35,6 +35,9 @@ jobs:
           npm run check
           npm run test:unit
           npm run package
+      - name: Install browser for offline acceptance
+        working-directory: plugin
+        run: npx playwright install chromium
       - name: Verify signed host and exact plugin package
         working-directory: plugin
         env:

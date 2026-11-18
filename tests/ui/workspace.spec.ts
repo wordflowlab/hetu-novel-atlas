@@ -124,9 +124,25 @@ test("真实Electron专业工作面、AI交接、固定导出、冲突与重开"
       ];
     }
     if (KIND === "novel_atlas") {
-      p.events.push({...p.events[0],id:"e2",title:"已知时间的来信",story_time:"清晨",narrative_order:2});
-      p.nodes.push({...p.nodes[0],id:"guild",name:"旧港邮会",kind:"group"});
-      p.nodes.push({...p.nodes[0],id:"promise",name:"守信原则",kind:"concept"});
+      p.events.push({
+        ...p.events[0],
+        id: "e2",
+        title: "已知时间的来信",
+        story_time: "清晨",
+        narrative_order: 2,
+      });
+      p.nodes.push({
+        ...p.nodes[0],
+        id: "guild",
+        name: "旧港邮会",
+        kind: "group",
+      });
+      p.nodes.push({
+        ...p.nodes[0],
+        id: "promise",
+        name: "守信原则",
+        kind: "concept",
+      });
     }
     let record = await c.invoke("save_project", {
       content: p,
@@ -202,33 +218,59 @@ test("真实Electron专业工作面、AI交接、固定导出、冲突与重开"
       .getByRole("navigation", { name: "专业视图" })
       .getByRole("button")
       .all();
-    for (const [index,b] of buttons.entries()) {
+    for (const [index, b] of buttons.entries()) {
       await b.click();
       await expect(b).toHaveAttribute("aria-current", "page");
       await expect(page.getByRole("alert")).toHaveCount(0);
-      await page.screenshot({path:info.outputPath(`view-${index}.png`),fullPage:true});
+      await page.screenshot({
+        path: info.outputPath(`view-${index}.png`),
+        fullPage: true,
+      });
     }
     if (KIND === "novel_atlas") {
-      await page.getByRole("button",{name:"关系",exact:true}).click();
-      const textSize=await page.locator(".graph text").first().evaluate((e:SVGTextElement)=>{
-        const matrix=e.getScreenCTM()!;
-        return Number.parseFloat(getComputedStyle(e).fontSize)*Math.hypot(matrix.a,matrix.b);
-      });
+      await page.getByRole("button", { name: "关系", exact: true }).click();
+      const textSize = await page
+        .locator(".graph text")
+        .first()
+        .evaluate((e: SVGTextElement) => {
+          const matrix = e.getScreenCTM()!;
+          return (
+            Number.parseFloat(getComputedStyle(e).fontSize) *
+            Math.hypot(matrix.a, matrix.b)
+          );
+        });
       expect(textSize).toBeGreaterThanOrEqual(12);
-      await page.getByRole("button",{name:"人物",exact:true}).click();
-      await expect(page.getByRole("heading",{name:"旧港邮会",exact:true})).toBeVisible();
-      await page.getByRole("button",{name:"器物",exact:true}).click();
-      await expect(page.getByRole("heading",{name:"守信原则",exact:true})).toBeVisible();
-      await page.getByRole("button",{name:"时间线",exact:true}).click();
-      await expect(page.locator(".timeline article").first()).toContainText("等一封信");
+      await page.getByRole("button", { name: "人物", exact: true }).click();
+      await expect(
+        page.getByRole("heading", { name: "旧港邮会", exact: true }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "器物", exact: true }).click();
+      await expect(
+        page.getByRole("heading", { name: "守信原则", exact: true }),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "时间线", exact: true }).click();
+      await expect(page.locator(".timeline article").first()).toContainText(
+        "等一封信",
+      );
       await page.getByLabel("时间线排序").selectOption("story");
-      await expect(page.locator(".timeline article").first()).toContainText("已知时间的来信");
-      await expect(page.locator(".timeline article").last()).toContainText("等一封信");
+      await expect(page.locator(".timeline article").first()).toContainText(
+        "已知时间的来信",
+      );
+      await expect(page.locator(".timeline article").last()).toContainText(
+        "等一封信",
+      );
     }
     await buttons[0].click();
-    expect(await page.evaluate(()=>getComputedStyle(document.body).backgroundImage)).toContain("gradient");
-    await page.getByRole("button",{name:"让AI处理",exact:true}).focus();
-    await expect(page.getByRole("button",{name:"让AI处理",exact:true})).toBeFocused();
+    await page.emulateMedia({ reducedTransparency: "no-preference" });
+    expect(
+      await page.evaluate(
+        () => getComputedStyle(document.body).backgroundImage,
+      ),
+    ).toContain("gradient");
+    await page.getByRole("button", { name: "让AI处理", exact: true }).focus();
+    await expect(
+      page.getByRole("button", { name: "让AI处理", exact: true }),
+    ).toBeFocused();
     await page.getByLabel("创作目标").fill("依据当前方案，准备下一轮创作");
     await page.getByRole("button", { name: "让AI处理", exact: true }).click();
     await expect(page.locator(".status")).toContainText("已复制接续说明");
