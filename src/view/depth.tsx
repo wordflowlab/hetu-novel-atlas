@@ -1,5 +1,6 @@
 import React from "react";
 import { bundle } from "../domain/depth.ts";
+const values:Record<string,string>={acquire:"取得",gift:"赠予",borrow:"借用",return:"归还",destroy:"销毁",unknown:"未知流转",mention:"被提及",present:"实际登场",viewpoint:"叙述视角"};
 const basis: Record<string, string> = {
   observed: "已发生",
   planned: "规划",
@@ -26,7 +27,7 @@ export function DepthView({
         {o.other_id ? " → " + name(o.other_id) : ""}
       </h3>
       <p>
-        {o.key}：{o.value}，{basis[o.basis]}，{event(o.event_id)}
+        {o.kind==="item"?"流转":o.kind==="appearance"?"出场":o.key}：{values[o.value]??o.value}，{basis[o.basis]}，{event(o.event_id)}
       </p>
       {o.perspective && <p>叙述视角：{o.perspective}</p>}
       {evidence(o)}
