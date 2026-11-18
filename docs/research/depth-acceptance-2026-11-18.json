@@ -1,0 +1,52 @@
+{
+  "recorded_at": "2026-11-18",
+  "version": "0.2.0",
+  "plugin_id": "org.wordflowlab.novel-atlas",
+  "tested_source_commit": "2dd292e63bd82b70a2b5a24c6ce092dce76bca63",
+  "package_sha256": "3b0b6006069eb0b2c70c709ee9a3ed2bd006b4491946a161748389e77a46d298",
+  "host": {
+    "version": "0.11.11",
+    "source_commit": "6053f973a6740b6f4d7fca1bd69452b2bac3fa46",
+    "source_build": false,
+    "signature_verified": true
+  },
+  "platform": "macOS arm64",
+  "unit_tests": 29,
+  "declared_actions": 24,
+  "official_ci": {
+    "id": 44250608587,
+    "url": "https://github.com/wordflowlab/hetu-novel-atlas/actions/runs/44250608587",
+    "result": "success"
+  },
+  "results": [
+    {
+      "test": "machine",
+      "exit_code": 0
+    },
+    {
+      "test": "ui",
+      "exit_code": 0
+    }
+  ],
+  "same_codex_connection": {
+    "dynamic_discovery": true,
+    "packaged_skill_read": true,
+    "separate_codex_plugin": false
+  },
+  "compatibility": {
+    "optional_depth_version": 1,
+    "old_revision_preserved": true,
+    "destructive_downgrade_refused": true
+  },
+  "not_verified": [
+    "Windows/Linux专业业务旅程",
+    "文学质量与作者认可",
+    "付费模型",
+    "正文采纳及定稿"
+  ],
+  "earlier_failures_retained": [
+    "安装验收的默认透明度模拟未生效，经实际媒体查询改用CDP校验正常与减少透明度",
+    "旧页签列表分支已修复并复验",
+    "本机高负载导致的未知结果及超时不计为通过"
+  ]
+}
