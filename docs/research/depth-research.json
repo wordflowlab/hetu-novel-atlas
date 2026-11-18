@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-18",
+  "references": [
+    {
+      "repository": "lilinshuei/novel-atlas",
+      "commit": "2a6cd304c9ce4a7db00bb31e4a2ec08571f0efd3",
+      "path": "README.md",
+      "sha256": "42a75360020cc6a10a086b79799d678bbff06d5e97d57e1ce7347d8cbc138cdd",
+      "read_scope": "本轮定向源码／方法复核，未执行上游代码",
+      "code_copied": false
+    }
+  ],
+  "limitations": [
+    "独立实现，未主张与上游全功能相同",
+    "未以统计或模型来源评分判断文学质量"
+  ]
+}

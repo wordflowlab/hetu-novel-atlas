@@ -1,7 +1,7 @@
 {
-  "date": "2026-11-17T12:42:42.324Z",
+  "date": "2026-11-18T05:25:13.511Z",
   "platform": "darwin arm64",
-  "package_sha256": "3d2526fb4f9ae0a39ff591f7c7ad559a1983e526df26614babf7c981e2fe764b",
+  "package_sha256": "28cc8229a2f3989b153a0285500839105a134ca61b820bc9b2f673e79f34e587",
   "actions": [
     "skills.read",
     "save_project",
@@ -17,6 +17,13 @@
     "remove_relation",
     "remove_event",
     "remove_node",
+    "save_depth",
+    "put_place_geometry",
+    "put_route_segment",
+    "put_observation",
+    "put_extraction_run",
+    "get_projection_bundle",
+    "preview_projection_update",
     "compare_versions",
     "export_project",
     "get_project"

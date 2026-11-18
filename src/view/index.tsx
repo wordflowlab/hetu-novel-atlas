@@ -1,3 +1,4 @@
+import { DepthView } from "./depth.tsx";
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import manifest from "../../contracts/plugin-manifest.json" with { type: "json" };
@@ -50,6 +51,10 @@ const tabsets: Record<string, [string, string][]> = {
     ["timeline", "时间线"],
     ["growth", "成长"],
     ["items", "器物"],
+    ["map", "地图行程"],
+    ["changes", "变化曲线"],
+    ["transfers", "器物流转"],
+    ["coverage", "阅读覆盖"],
   ],
 };
 async function invoke(action: string, input: any = {}) {
@@ -70,7 +75,7 @@ function App() {
     [busy, setBusy] = useState(false),
     [query, setQuery] = useState(""),
     [selected, setSelected] = useState<any>(),
-    [order,setOrder]=useState("narrative"),
+    [order, setOrder] = useState("narrative"),
     [source, setSource] = useState<any>(),
     [editor, setEditor] = useState(""),
     [editing, setEditing] = useState(false),
@@ -298,8 +303,32 @@ function App() {
         ) : tab === "timeline" ? (
           <>
             <h2>事件时间线</h2>
-            <label>排序 <select aria-label="时间线排序" value={order} onChange={e=>setOrder(e.target.value)}><option value="narrative">叙事顺序</option><option value="story">故事时间文本，未知置后</option></select></label>
-            <div className="timeline">{[...result.events].sort((a:any,b:any)=>order==="narrative"?a.narrative_order-b.narrative_order:a.story_time===null?(b.story_time===null?0:1):b.story_time===null?-1:a.story_time.localeCompare(b.story_time)).map(article)}</div>
+            <label>
+              排序{" "}
+              <select
+                aria-label="时间线排序"
+                value={order}
+                onChange={(e) => setOrder(e.target.value)}
+              >
+                <option value="narrative">叙事顺序</option>
+                <option value="story">故事时间文本，未知置后</option>
+              </select>
+            </label>
+            <div className="timeline">
+              {[...result.events]
+                .sort((a: any, b: any) =>
+                  order === "narrative"
+                    ? a.narrative_order - b.narrative_order
+                    : a.story_time === null
+                      ? b.story_time === null
+                        ? 0
+                        : 1
+                      : b.story_time === null
+                        ? -1
+                        : a.story_time.localeCompare(b.story_time),
+                )
+                .map(article)}
+            </div>
           </>
         ) : tab === "growth" ? (
           <>
@@ -340,6 +369,8 @@ function App() {
         );
     }
   }
+  if (p && ["map", "changes", "transfers", "coverage"].includes(tab))
+    content = <DepthView p={p} tab={tab} evidence={evidence} />;
   return (
     <div className="app">
       <header>
@@ -641,14 +672,16 @@ function Empty({ text }: { text: string }) {
   );
 }
 function RelationshipGraph({ p }: { p: any }) {
-  const element=useRef<SVGSVGElement>(null);
-  const [width,setWidth]=useState(700);
-  useEffect(()=>{
-    if(!element.current)return;
-    const observer=new ResizeObserver(entries=>setWidth(Math.max(280,entries[0].contentRect.width)));
+  const element = useRef<SVGSVGElement>(null);
+  const [width, setWidth] = useState(700);
+  useEffect(() => {
+    if (!element.current) return;
+    const observer = new ResizeObserver((entries) =>
+      setWidth(Math.max(280, entries[0].contentRect.width)),
+    );
     observer.observe(element.current);
-    return ()=>observer.disconnect();
-  },[]);
+    return () => observer.disconnect();
+  }, []);
 
   const positions = new Map<string, { x: number; y: number }>(
     p.nodes.map((n: any, i: number) => {
@@ -673,11 +706,14 @@ function RelationshipGraph({ p }: { p: any }) {
   const top = Math.min(0, ...points.map((p) => p.y)) - 60;
   const right = Math.max(700, ...points.map((p) => p.x)) + 60;
   const bottom = Math.max(440, ...points.map((p) => p.y)) + 60;
-  const height=360;
-  const scale=Math.min((width-96)/(right-left),(height-96)/(bottom-top));
+  const height = 360;
+  const scale = Math.min(
+    (width - 96) / (right - left),
+    (height - 96) / (bottom - top),
+  );
   for (const point of positions.values()) {
-    point.x=width/2+(point.x-(left+right)/2)*scale;
-    point.y=height/2+(point.y-(top+bottom)/2)*scale;
+    point.x = width / 2 + (point.x - (left + right) / 2) * scale;
+    point.y = height / 2 + (point.y - (top + bottom) / 2) * scale;
   }
   return (
     <svg
@@ -687,15 +723,33 @@ function RelationshipGraph({ p }: { p: any }) {
       role="img"
       aria-label="人物关系示意图"
     >
-      <defs><marker id="relation-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7" fill="var(--sage-8)" /></marker></defs>
+      <defs>
+        <marker
+          id="relation-arrow"
+          markerWidth="7"
+          markerHeight="7"
+          refX="6"
+          refY="3.5"
+          orient="auto"
+        >
+          <path d="M0 0 L7 3.5 L0 7" fill="var(--sage-8)" />
+        </marker>
+      </defs>
       {p.relations.map((r: any) => {
         const a: any = positions.get(r.from),
           b: any = positions.get(r.to);
-        const length=Math.hypot(b.x-a.x,b.y-a.y)||1;
-        const dx=(b.x-a.x)/length,dy=(b.y-a.y)/length;
+        const length = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+        const dx = (b.x - a.x) / length,
+          dy = (b.y - a.y) / length;
         return (
           <g key={r.id}>
-            <line x1={a.x+dx*32} y1={a.y+dy*32} x2={b.x-dx*34} y2={b.y-dy*34} markerEnd="url(#relation-arrow)" />
+            <line
+              x1={a.x + dx * 32}
+              y1={a.y + dy * 32}
+              x2={b.x - dx * 34}
+              y2={b.y - dy * 34}
+              markerEnd="url(#relation-arrow)"
+            />
             <text x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 6}>
               {r.kind}
             </text>
@@ -706,7 +760,8 @@ function RelationshipGraph({ p }: { p: any }) {
         const pos: any = positions.get(n.id);
         return (
           <g key={n.id} transform={`translate(${pos.x},${pos.y})`}>
-            <title>{n.name}</title><circle r="32" />
+            <title>{n.name}</title>
+            <circle r="32" />
             <text textAnchor="middle" dy="5">
               {n.name.slice(0, 8)}
             </text>

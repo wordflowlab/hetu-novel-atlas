@@ -1,3 +1,4 @@
+import { validateDepth } from "./depth.ts";
 import manifest from "../../contracts/plugin-manifest.json" with { type: "json" };
 import {
   canonical,
@@ -22,6 +23,7 @@ export function validateAction(action: string, input: unknown) {
 export function validate(p: any) {
   const f = (validators as any).project;
   need(f(p), "专业数据不符合Schema：" + JSON.stringify(f.errors));
+  validateDepth(p);
   for (const [k, list] of Object.entries(p))
     if (
       Array.isArray(list) &&
@@ -84,9 +86,16 @@ export function sourceIndices(p: any): number[] {
   return out;
 }
 export function projection(p: any, view: string) {
-  const kinds: Record<string, string[]> = { characters: ["character", "group"], locations: ["location"], items: ["item", "concept"] };
+  const kinds: Record<string, string[]> = {
+    characters: ["character", "group"],
+    locations: ["location"],
+    items: ["item", "concept"],
+  };
   if (kinds[view])
-    return { view, nodes: p.nodes.filter((x: any) => kinds[view].includes(x.kind)) };
+    return {
+      view,
+      nodes: p.nodes.filter((x: any) => kinds[view].includes(x.kind)),
+    };
   if (view === "timeline")
     return {
       view,
